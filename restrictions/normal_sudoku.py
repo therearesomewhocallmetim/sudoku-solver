@@ -23,7 +23,7 @@ class NormalSudoku(Restriction):
     def __init__(self, indexes):
         super().__init__(indexes, [unique])
 
-    def remove_givens_from_candidates(self, givens, candidates):
+    def filter_candidates(self, givens, candidates):
         new_cands = []
         givens = frozenset(givens)
         for cand in candidates:
