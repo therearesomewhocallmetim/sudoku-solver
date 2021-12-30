@@ -1,6 +1,17 @@
+"""
+Bruteforce algorithm
+
+Check all the possible permutations of available candidates for the cells
+restricted by this rule and check each one of them for complying with the rule
+and given digits.
+
+Because this is a brute force algorithm, it is slow, so please use it after you
+have narrowed down the possibilities using other algorithms.
+"""
+
 import itertools
 
-from commands.util import _get_elements_for_rule, _has_givens, _complies_with_rule, _update_candidates
+from ..util import _get_elements_for_rule, _has_givens, _complies_with_rule, _update_candidates
 
 
 def filter_candidates(game, board, candidates):

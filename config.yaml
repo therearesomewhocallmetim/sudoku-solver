@@ -1,0 +1,8 @@
+game:
+  name: Normal Sudoku
+  rules:
+    - normal_sudoku.all
+  strategies:
+    - remove_given_from_candidate_cell
+    - remove_given_from_neighbouring_cells
+#    - rule_bruteforce

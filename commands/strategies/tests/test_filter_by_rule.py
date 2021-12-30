@@ -1,4 +1,4 @@
-from commands.filter_by_rule import filter_candidates
+from ..filter_by_rule import filter_candidates
 from components.game import Game
 from restrictions.normal_sudoku import NormalSudoku
 
