@@ -5,12 +5,30 @@ from util import row_indexes, column_indexes
 
 
 def unique(nums: Iterable[int]) -> bool:
+    nums = list(filter(bool, nums))
     return len(set(nums)) == len(list(nums))
+
+
+def in_allowed_range(nums: Iterable[int]) -> bool:
+    nums = list(filter(bool, nums))
+    return min(nums) >= 1 and max(nums) <= 9
+
+
+class OneToNine(Restriction):
+    def __init__(self):
+        super().__init__(list(range(81)), in_allowed_range)
 
 
 class NormalSudoku(Restriction):
     def __init__(self, indexes):
         super().__init__(indexes, [unique])
+
+    def remove_givens_from_candidates(self, givens, candidates):
+        new_cands = []
+        givens = frozenset(givens)
+        for cand in candidates:
+            new_cands.append(list(frozenset(cand) - givens))
+        return new_cands
 
     @staticmethod
     def rows():
