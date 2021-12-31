@@ -1,6 +1,7 @@
 def _get_elements_for_rule(board, indexes):
     return [board[i] for i in indexes]
 
+
 def _has_givens(givens):
     def filter_fn(perm):
         for p, g in zip(perm, givens):
@@ -10,6 +11,7 @@ def _has_givens(givens):
                 return False
         return True
     return filter_fn
+
 
 def _complies_with_rule(rule):
     def filter_fn(perm):

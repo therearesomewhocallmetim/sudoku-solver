@@ -29,7 +29,7 @@ def make_cell_value(cell, cell_number):
     if cell[0]:
         return f"[green{background}]   \n {cell[0]} \n   "
     nums = [str(n) if n in cell[1] else " " for n in range(1, 10)]
-    return f'[black{background}]{"".join(nums[0:3])}\n{"".join(nums[3:6])}\n{"".join(nums[6:])}'
+    return f'[blue{background}]{"".join(nums[0:3])}\n{"".join(nums[3:6])}\n{"".join(nums[6:])}'
 
 
 def get_colour_for_box(cell_number):
@@ -45,73 +45,67 @@ def display_board(board, candidates):
         [x, y] for x, y in zip(board, candidates)
     ]
     table = generate_table(display_board)
+    console = Console()
     console.print(table)
     input("continue?")
 
 
-if __name__ == "__main__":
+def apply_strategy_while_works(strategy, game, board, candidates):
+    while True:
+        old_cands = copy.deepcopy(candidates)
+        print(strategy[1])
+        candidates = strategy[3](game, board, candidates)
 
+        display_board(board, candidates)
+        if len(list(filter(lambda x: x>0, board))) == 81:
+            return True
+        if old_cands == candidates:
+            return False
+
+        board, candidates = apply_cands_to_board(board, candidates)
+        display_board(board, candidates)
+
+
+def apply_all_strategies_while_work(strategies, game, board, candidates):
+    while True:
+        old_cands = copy.deepcopy(candidates)
+        for strategy in strategies:
+            if apply_strategy_while_works(strategy, game, board, candidates):
+                return True
+        if old_cands == candidates:
+            print("None of the strategies works any more")
+            return False
+
+
+def main():
     all_strategies = load_strategies()
     with open('config.yaml') as stream:
         config = yaml.safe_load(stream)
-    print(config)
 
     restrictions = load_restrictions(*config['game']['rules'])
-    rs = []
-    for f in restrictions:
-        print(f.__name__)
-        rs.extend(f())
-    print("RS: ")
-    print(rs)
-    for thing in rs:
-        print(type(thing.indexes))
-    game = Game(rs)
+    game = Game(restrictions)
     board = load_board('board.txt')
-    print(board)
-
-    # print(all_strategies, config['game']['strategies'])
-
 
     strategies_by_name = {
         s[0]: s for s in all_strategies
     }
 
     strategies = [strategies_by_name[name] for name in config['game']['strategies']]
-    #
-    #
-    # strategies = list(filter(
-    #     lambda x: x[0] in config['game']['strategies'],
-    #     all_strategies
-    # ))
-
-    print(strategies)
-
-
-    # game = Game(restrictions)
-    candidates = [list(range(1, 10))] * 81
-    console = Console()
-
-    strategies_not_exhausted = True
-
-    while strategies_not_exhausted:
-        for strategy in strategies:
-            print(f"applying strategy {strategy[0]}")
-            strategy_still_works = True
-            while strategy_still_works:
-                old_cands = copy.deepcopy(candidates)
-                candidates = strategy[3](game, board, candidates)
-
-                display_board(board, candidates)
-                if old_cands == candidates:
-                    break
-                else:
-                    print(old_cands, '\n\n', candidates)
-
-                board, candidates = apply_cands_to_board(board, candidates)
-                display_board(board, candidates)
-                input("Continue?")
 
     print("Imported the following strategies:")
     for i, (_, name, doc, _) in enumerate(strategies, start=1):
         print(f"{i}) {name}\n{doc}\n")
+    input("continue?")
 
+    candidates = [list(range(1, 10))] * 81
+
+    solved = apply_all_strategies_while_work(strategies, game, board, candidates)
+    if solved:
+        print("The puzzle has been solved")
+    else:
+        print("Failed to solve the puzzle")
+
+
+
+if __name__ == "__main__":
+    main()

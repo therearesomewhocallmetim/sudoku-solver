@@ -8,7 +8,6 @@ def column_indexes(n):
 
 
 def apply_cands_to_board(board, candidates):
-    print(f'{len(board) = }, {len(candidates) = }')
     for i, cands in enumerate(candidates):
         if len(cands) == 1:
             if board[i]:

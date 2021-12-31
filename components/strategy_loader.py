@@ -3,7 +3,11 @@ from pathlib import Path
 
 
 def _module_name(module):
-    return module.__name__.split('.')[-1].replace("_", " ").title()
+    return module.__name__.split('.')[-1]
+
+
+def _module_title(module):
+    return _module_name(module).replace("_", " ").title()
 
 
 def _module_doc(module):
@@ -16,18 +20,16 @@ def load_strategies():
 
     modules = [
         importlib.import_module(f"commands.strategies.{py_file.stem}")
-        for py_file in py_files
-    ]
+        for py_file in py_files]
 
     return [
         (
-            m.__name__.split('.')[-1],
             _module_name(m),
+            _module_title(m),
             _module_doc(m),
             m.filter_candidates
         )
-        for m in modules if hasattr(m, "filter_candidates")
-    ]
+        for m in modules if hasattr(m, "filter_candidates")]
 
 
 def load_restrictions(*names):
@@ -35,7 +37,7 @@ def load_restrictions(*names):
     for module_name, function_name in map(lambda x: x.split('.'), names):
         module = importlib.import_module(f'restrictions.{module_name}')
         try:
-            functions.append(getattr(module, function_name))
+            functions.extend(getattr(module, function_name).__call__())
         except AttributeError as e:
             raise AttributeError(
                 f"Cannot load restriction {module_name}.{function_name}"
