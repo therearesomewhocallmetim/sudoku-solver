@@ -91,28 +91,25 @@ if __name__ == "__main__":
     candidates = [list(range(1, 10))] * 81
     console = Console()
 
+    strategies_not_exhausted = True
 
-    for strategy in strategies:
-        print(f"applying strategy {strategy[0]}")
-        while True:
-            old_cands = copy.deepcopy(candidates)
-            candidates = strategy[3](game, board, candidates)
+    while strategies_not_exhausted:
+        for strategy in strategies:
+            print(f"applying strategy {strategy[0]}")
+            strategy_still_works = True
+            while strategy_still_works:
+                old_cands = copy.deepcopy(candidates)
+                candidates = strategy[3](game, board, candidates)
 
-            display_board(board, candidates)
-            if old_cands == candidates:
-                break
-            else:
-                print(old_cands, '\n\n', candidates)
+                display_board(board, candidates)
+                if old_cands == candidates:
+                    break
+                else:
+                    print(old_cands, '\n\n', candidates)
 
-            board = apply_cands_to_board(board, candidates)
-            display_board(board, candidates)
-            input("Continue?")
-
-
-
-
-
-
+                board, candidates = apply_cands_to_board(board, candidates)
+                display_board(board, candidates)
+                input("Continue?")
 
     print("Imported the following strategies:")
     for i, (_, name, doc, _) in enumerate(strategies, start=1):

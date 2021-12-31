@@ -5,4 +5,5 @@ game:
   strategies:
     - remove_given_from_candidate_cell
     - remove_given_from_neighbouring_cells
+    - naked_single
 #    - rule_bruteforce

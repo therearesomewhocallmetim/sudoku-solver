@@ -14,7 +14,8 @@ def apply_cands_to_board(board, candidates):
             if board[i]:
                 raise RuntimeError(f"Board value: {board[i]}, {i = }, {cands[0] = }")
             board[i] = cands[0]
-    return board
+            candidates[i] = []
+    return board, candidates
 
 
 def load_board(filename):
