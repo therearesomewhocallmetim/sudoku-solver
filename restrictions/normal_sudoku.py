@@ -2,22 +2,12 @@ from itertools import chain
 from typing import Iterable
 
 from restrictions.restriction import Restriction
-from util import row_indexes, column_indexes
+from util import column_indexes, row_indexes
 
 
 def unique(nums: Iterable[int]) -> bool:
     nums = list(filter(bool, nums))
     return len(set(nums)) == len(list(nums))
-
-
-def in_allowed_range(nums: Iterable[int]) -> bool:
-    nums = list(filter(bool, nums))
-    return min(nums) >= 1 and max(nums) <= 9
-
-
-class OneToNine(Restriction):
-    def __init__(self):
-        super().__init__(list(range(81)), in_allowed_range)
 
 
 class NormalSudoku(Restriction):

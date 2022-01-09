@@ -1,14 +1,14 @@
 import copy
+import pathlib
 
+import click
+import yaml
 from rich.console import Console
-
 from rich.table import Table
 
-import yaml
-
 from components.game import Game
-from components.strategy_loader import load_strategies, load_restrictions
-from util import load_board, apply_cands_to_board
+from components.strategy_loader import load_restrictions, load_strategies
+from util import apply_cands_to_board, load_board
 
 
 def generate_table(board) -> Table:
@@ -41,13 +41,17 @@ def get_colour_for_box(cell_number):
 
 
 def display_board(board, candidates):
-    display_board = [
+    board_to_display = [
         [x, y] for x, y in zip(board, candidates)
     ]
-    table = generate_table(display_board)
+    table = generate_table(board_to_display)
     console = Console()
     console.print(table)
     input("continue?")
+
+
+def board_has_been_solved(board):
+    return len(list(filter(lambda x: x > 0, board))) == 81
 
 
 def apply_strategy_while_works(strategy, game, board, candidates):
@@ -56,8 +60,7 @@ def apply_strategy_while_works(strategy, game, board, candidates):
         print(strategy[1])
         candidates = strategy[3](game, board, candidates)
 
-        display_board(board, candidates)
-        if len(list(filter(lambda x: x>0, board))) == 81:
+        if board_has_been_solved(board):
             return True
         if old_cands == candidates:
             return False
@@ -77,24 +80,45 @@ def apply_all_strategies_while_work(strategies, game, board, candidates):
             return False
 
 
-def main():
-    all_strategies = load_strategies()
-    with open('config.yaml') as stream:
+@click.command(
+    help='''A programme for solving sudoku puzzles.
+    
+    Specify the applicable rules in a yaml file, specify the board in a txt file.
+    
+    You can write additional restrictions by inheriting from the 
+    `restrictions.restriction.Restriction` class;
+    
+    You can provide more strategies by adding python modules to the 
+    `commands.strategies` package. Each such module must contain a
+    `filter_candidates(game, givens, candidates)` function that should return the
+    possible candidates after applying the strategy to the existing candidates.
+    '''
+)
+@click.option(
+    '-g', '--game-conf',
+    default='config.yaml',
+    type=pathlib.Path,
+    help='The file describing the applicable rules')
+@click.option(
+    '-b', '--board',
+    default='board.txt',
+    type=pathlib.Path,
+    help='The board. Emtpy cells are represented by zeros, givens by the corresponding digits'
+)
+def main(game_conf, board):
+    with open(game_conf) as stream:
         config = yaml.safe_load(stream)
 
-    restrictions = load_restrictions(*config['game']['rules'])
+    strategies = load_strategies(config['game']['strategies'])
+    restrictions = load_restrictions(config['game']['rules'])
     game = Game(restrictions)
-    board = load_board('board.txt')
+    board = load_board(board)
 
-    strategies_by_name = {
-        s[0]: s for s in all_strategies
-    }
-
-    strategies = [strategies_by_name[name] for name in config['game']['strategies']]
-
-    print("Imported the following strategies:")
+    c = Console()
+    c.rule('[bold red] Sudoku Solver ')
+    c.print("[green underline]Imported the following strategies:")
     for i, (_, name, doc, _) in enumerate(strategies, start=1):
-        print(f"{i}) {name}\n{doc}\n")
+        c.print(f"[yellow]{i}) {name}[reset]\n{doc}\n")
     input("continue?")
 
     candidates = [list(range(1, 10))] * 81
@@ -104,7 +128,6 @@ def main():
         print("The puzzle has been solved")
     else:
         print("Failed to solve the puzzle")
-
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 import pytest
 
-from restrictions.normal_sudoku import NormalSudoku, unique
+from restrictions import normal_sudoku
+from restrictions.normal_sudoku import unique
 
 
 @pytest.mark.parametrize("row, expected", [
@@ -8,7 +9,7 @@ from restrictions.normal_sudoku import NormalSudoku, unique
     (8, [72, 73, 74, 75, 76, 77, 78, 79, 80])
 ])
 def test_rows(row, expected):
-    rows = NormalSudoku.rows()
+    rows = normal_sudoku.rows()
     assert rows[row].indexes == expected
     assert rows[row].checks == [unique]
 
@@ -18,9 +19,10 @@ def test_rows(row, expected):
     (8, [8, 17, 26, 35, 44, 53, 62, 71, 80])
 ])
 def test_columns(col, expected):
-    cols = NormalSudoku.columns()
+    cols = normal_sudoku.columns()
     assert cols[col].indexes == expected
     assert cols[col].checks == [unique]
+
 
 @pytest.mark.parametrize("n, expected", [
     (0, [0, 1, 2, 9, 10, 11, 18, 19, 20]),
@@ -28,9 +30,6 @@ def test_columns(col, expected):
     (8, [60, 61, 62, 69, 70, 71, 78, 79, 80]),
 ])
 def test__get_box(n, expected):
-    boxes = NormalSudoku.boxes()
+    boxes = normal_sudoku.boxes()
     assert boxes[n].indexes == expected
     assert boxes[n].checks == [unique]
-
-
-

@@ -1,8 +1,6 @@
-from ..util import (
-    _has_givens, _complies_with_rule,
-    _update_candidates
-)
 from restrictions.restriction import Restriction
+
+from ..util import _complies_with_rule, _has_givens, _update_candidates
 
 
 def test_has_givens():
@@ -12,10 +10,11 @@ def test_has_givens():
         [3, 2, 1],
         [1, 3, 2]
     ]
-    givens = [0,2, 1]
+    givens = [0, 2, 1]
     expected = [[3, 2, 1]]
     actual = list(filter(_has_givens(givens), permutations))
     assert actual == expected
+
 
 def test_complies_with_rule():
     permutations = [
@@ -42,4 +41,3 @@ def test_update_candidates():
     expected = [1, 9, 8, 7, 6, 6]
     actual = _update_candidates(candidates, new_candidates, indexes)
     assert actual == expected
-

@@ -14,7 +14,7 @@ def _module_doc(module):
     return module.__doc__
 
 
-def load_strategies():
+def load_strategies(names):
     strategies_dir = Path('commands', 'strategies')
     py_files = [x for x in strategies_dir.iterdir() if x.is_file() and x.name != "__init__.py"]
 
@@ -22,17 +22,22 @@ def load_strategies():
         importlib.import_module(f"commands.strategies.{py_file.stem}")
         for py_file in py_files]
 
-    return [
+    all_strategies = [
         (
             _module_name(m),
             _module_title(m),
             _module_doc(m),
-            m.filter_candidates
+            getattr(m, "filter_candidates")
         )
         for m in modules if hasattr(m, "filter_candidates")]
+    strategies_by_name = {
+        s[0]: s for s in all_strategies
+    }
+
+    return [strategies_by_name[name] for name in names]
 
 
-def load_restrictions(*names):
+def load_restrictions(names):
     functions = []
     for module_name, function_name in map(lambda x: x.split('.'), names):
         module = importlib.import_module(f'restrictions.{module_name}')

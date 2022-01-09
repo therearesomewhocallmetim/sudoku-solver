@@ -1,7 +1,8 @@
-from typing import Iterable, Callable
+from dataclasses import dataclass
+from typing import Callable, Iterable
 
 
+@dataclass
 class Restriction:
-    def __init__(self, indexes, checks):
-        self.indexes: Iterable[int] = indexes
-        self.checks: Iterable[Callable[[Iterable[int]], bool]] = checks
+    indexes: Iterable[int]
+    checks: Iterable[Callable[[Iterable[int]], bool]]

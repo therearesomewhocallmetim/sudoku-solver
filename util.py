@@ -21,6 +21,7 @@ def load_board(filename):
     with open(filename) as infile:
         return get_board_from_str(infile.read())
 
+
 def get_board_from_str(str_board):
     str_board = str_board.strip()
     str_board = str_board.replace('\n', '')

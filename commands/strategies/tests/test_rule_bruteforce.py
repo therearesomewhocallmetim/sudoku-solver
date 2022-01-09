@@ -1,7 +1,8 @@
-from ..rule_bruteforce import filter_candidates
 from components.game import Game
 from restrictions.normal_sudoku import unique
 from restrictions.restriction import Restriction
+
+from ..rule_bruteforce import filter_candidates
 
 
 def test_filter_candidates():

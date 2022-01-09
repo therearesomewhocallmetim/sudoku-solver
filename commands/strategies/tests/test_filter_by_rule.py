@@ -1,6 +1,7 @@
-from ..filter_by_rule import filter_candidates
 from components.game import Game
-from restrictions.normal_sudoku import NormalSudoku
+from restrictions import normal_sudoku
+
+from ..remove_given_from_neighbouring_cells import filter_candidates
 
 
 def test_filter_candidates():
@@ -8,9 +9,9 @@ def test_filter_candidates():
     candidates = [list(range(1, 10))] * 81
 
     g = Game([
-        *NormalSudoku.rows(),
-        *NormalSudoku.columns(),
-        *NormalSudoku.boxes()
+        *normal_sudoku.rows(),
+        *normal_sudoku.columns(),
+        *normal_sudoku.boxes()
     ])
 
     filtered_board = filter_candidates(

@@ -11,7 +11,8 @@ have narrowed down the possibilities using other algorithms.
 
 import itertools
 
-from ..util import _get_elements_for_rule, _has_givens, _complies_with_rule, _update_candidates
+from ..util import (_complies_with_rule, _get_elements_for_rule, _has_givens,
+                    _update_candidates)
 
 
 def filter_candidates(game, board, candidates):
